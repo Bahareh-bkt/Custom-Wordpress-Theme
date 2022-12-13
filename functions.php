@@ -17,3 +17,21 @@ function hospital_features(){
 }
 add_action('after_setup_theme', 'hospital_features');
 
+function hospital_adjust_query($query) {
+    if (! is_admin() AND is_post_type_archive('event') AND $query-> is_main_query()){
+        
+        $query-> set('orderby', 'meta_value_num');
+        $query-> set('order' , 'ASC');
+        $query-> set('meta_key', 'event_date');
+        $today= date('Ymd');
+        $query-> set('meta_query', array(
+            array(
+                'key'=>'event_date',
+                'compare'=> '>=',
+                'value'=> $today ,
+                'type'=>'numeric'
+            ))
+        ); 
+    }
+}
+add_action('pre_get_posts', 'hospital_adjust_query');

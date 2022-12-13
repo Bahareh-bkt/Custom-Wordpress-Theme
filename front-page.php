@@ -17,9 +17,21 @@
           <h2 class="headline headline--small-plus t-center">Upcoming Events</h2>
 
           <?php 
+            $today = date('Ymd');
             $homepageEvents = new WP_Query(array(
-              'posts-per-page' => 2,
-              'post-type' => 'event'
+              'posts_per_page' => 2,
+              'post_type' => 'event',
+              'orderby' => 'meta_value_num',
+              'meta_key' => 'event_date',
+              'order' => 'ASC',
+              'meta_query' => array(
+                array(
+                  'key' => 'event_date',
+                  'compare' => '>=',
+                  'value' => $today,
+                  'type' => 'numeric'
+                )
+              )
             ));
             while($homepageEvents ->have_posts()){
               $homepageEvents -> the_post();
@@ -27,7 +39,7 @@
 
           <div class="event-summary">
             <a class="event-summary__date t-center" href="<?php the_permalink(); ?>">
-            <?php $eventDate = new DateTime(get_field('event-date')); ?>
+            <?php $eventDate = new DateTime(get_field('event_date')); ?>
               <span class="event-summary__month"><?php echo $eventDate-> format('M');?></span>
               <span class="event-summary__month"><?php echo $eventDate-> format('d');?></span>
             </a>
@@ -41,7 +53,7 @@
         wp_reset_postdata();
         ?>
 
-          <p class="t-center no-margin"><a href="#" class="btn btn--blue">View All Events</a></p>
+          <p class="t-center no-margin"><a href="<?php echo get_post_type_archive_link('event') ; ?>" class="btn btn--blue">View All Events</a></p>
         </div>
       </div>
 
