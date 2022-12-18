@@ -5,6 +5,7 @@ function hospital_functions() {
 
     wp_enqueue_style('hospital_main_styles', get_theme_file_uri('/build/style-index.css'));
     wp_enqueue_style('hospital_extra_styles', get_theme_file_uri('/build/index.css'));
+    wp_enqueue_script('main_js', get_theme_file_uri('build/index.js') , array('jquery') , 1.0 , true);
 }
 add_action('wp_enqueue_scripts','hospital_functions');
 
