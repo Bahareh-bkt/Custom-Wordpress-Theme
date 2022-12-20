@@ -34,8 +34,9 @@
                 <li><a href="<?php echo get_the_permalink($program);?>">
                 <?php echo get_the_title($program);?></a></li>
                 <?php } echo '</ul>'; ?>*/
-
-            $relatedPrograms = get_field('related_programs'); ?>
+        
+            $relatedPrograms = get_field('related_programs'); 
+            if($relatedPrograms) { ?>
             <hr class="section-break">
             <h4 class="headline headline--medium">Related Program(s): </h4>
             <ul class="link-list min-list">
@@ -45,7 +46,7 @@
                 <?php }  ?>
                 </ul>
         </div>
-    <?php }
+    <?php } }
 
     get_footer();
 ?>
