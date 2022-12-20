@@ -25,8 +25,25 @@
             <div class="generic-content">
                 <?php the_content(); ?>
             </div>
+        <?php 
+            /*$relatedPrograms = get_field('related_programs'); 
+            echo '<hr class="section-break">';
+            echo '<h4 class="headline headline--medium">Related Program(s): </h4>';
+            echo '<ul class="link-list min-list">';
+            foreach ($relatedPrograms as $program) {?>
+                <li><a href="<?php echo get_the_permalink($program);?>">
+                <?php echo get_the_title($program);?></a></li>
+                <?php } echo '</ul>'; ?>*/
 
-       
+            $relatedPrograms = get_field('related_programs'); ?>
+            <hr class="section-break">
+            <h4 class="headline headline--medium">Related Program(s): </h4>
+            <ul class="link-list min-list">
+            <?php foreach ($relatedPrograms as $program) {?>
+                <li><a href="<?php echo get_the_permalink($program);?>">
+                <?php echo get_the_title($program);?></a></li>
+                <?php }  ?>
+                </ul>
         </div>
     <?php }
 
