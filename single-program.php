@@ -25,10 +25,39 @@
             <div class="generic-content">
                 <?php the_content(); ?>
             </div>
-        
+        <?php 
+        $today = date('Ymd');
+        $homepageEvents = new WP_Query(array(
+          'posts_per_page' => 2,
+          'post_type' => 'event',
+          'orderby' => 'meta_value_num',
+          'meta_key' => 'event_date',
+          'order' => 'ASC',
+          'meta_query' => array(
+            array(
+                'key'=> 'related_programs',
+                'compare' => 'LIKE',
+                'value' => '"' . get_the_ID() . '"'
+            )
+          )
+        ));
+        echo '<hr class="section-break">';
+        echo '<h4 class="headline headline--medium"> Upcomin '.get_the_title().' Events</h4>';
+        while($homepageEvents ->have_posts()){
+          $homepageEvents -> the_post();?>
+          <div class="event-summary">
+            <a class="event-summary__date t-center" href="<?php the_permalink(); ?>">
+            <?php $eventDate = new DateTime(get_field('event_date')); ?>
+              <span class="event-summary__month"><?php echo $eventDate-> format('M');?></span>
+              <span class="event-summary__month"><?php echo $eventDate-> format('d');?></span>
+            </a>
+            <div class="event-summary__content">
+              <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
+            </div>
+          </div>
        
         </div>
-    <?php }
+    <?php }}
 
     get_footer();
 ?>
