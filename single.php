@@ -8,7 +8,7 @@
                 <div class="page-banner__content container container--narrow">
                     <h1 class="page-banner__title"><?php the_title(); ?></h1>
                 <div class="page-banner__intro">
-                    <p>Welcome to our Blog.</p>
+                    <p>single.php</p>
                 </div>
                 </div>
         </div>

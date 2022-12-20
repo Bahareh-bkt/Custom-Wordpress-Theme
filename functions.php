@@ -1,8 +1,6 @@
 <?php
 
 function hospital_functions() {
-
-
     wp_enqueue_style('hospital_main_styles', get_theme_file_uri('/build/style-index.css'));
     wp_enqueue_style('hospital_extra_styles', get_theme_file_uri('/build/index.css'));
     wp_enqueue_script('main_js', get_theme_file_uri('build/index.js') , array('jquery') , 1.0 , true);
@@ -19,6 +17,15 @@ function hospital_features(){
 add_action('after_setup_theme', 'hospital_features');
 
 function hospital_adjust_query($query) {
+
+    if(!is_admin() AND is_post_type_archive('program') AND $query-> is_main_query()){
+
+        $query -> set('orderby', 'title');
+        $query -> set('order', 'ASC');
+        $query -> set('posts_per_page', -1);
+    }
+
+
     if (! is_admin() AND is_post_type_archive('event') AND $query-> is_main_query()){
         
         $query-> set('orderby', 'meta_value_num');
