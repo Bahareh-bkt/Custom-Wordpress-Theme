@@ -13,6 +13,7 @@ function hospital_features(){
     register_nav_menu('headerMenuLocation','Header Menu Location');
     register_nav_menu('footerLocationOne','Footer Location One');
     register_nav_menu('footerLocationTwo','Footer Location Two');
+    add_theme_support('post_thumbnails');
 }
 add_action('after_setup_theme', 'hospital_features');
 
