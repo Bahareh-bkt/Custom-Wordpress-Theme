@@ -25,6 +25,42 @@
             <div class="generic-content">
                 <?php the_content(); ?>
             </div>
+
+        <hr class="section-break">
+    <!-- Related Doctors Part-->
+    <?php 
+
+        $relatedDoctor = new WP_Query(array(
+          'posts_per_page' => -1,
+          'post_type' => 'doctor',
+          'orderby' => 'meta_value_num',
+          'order' => 'ASC',
+          'meta_query' => array(
+            array(
+                'key'=> 'related_programs',
+                'compare' => 'LIKE',
+                'value' => '"' . get_the_ID() . '"'
+            )
+          )
+        ));
+        echo '<ul class="professor-cards">';
+        while($relatedDoctor ->have_posts()){
+          $relatedDoctor -> the_post();?>
+            <li class="professor-card__list-item">
+                <a class="professor-card" href="<?php the_permalink();?>">
+                    <img class="professor-card__image" src="<?php the_post_thumbnail_url(); ?>">
+                        <span class="professor-card__name"><?php the_title(); ?>
+                        </span>
+                </a>
+            </li>
+    <?php } 
+    echo '</ul>'; ?>
+
+    <?php }
+        wp_reset_postdata();
+    ?>
+
+        <!-- Related Events Part-->
         <?php 
         $today = date('Ymd');
         $homepageEvents = new WP_Query(array(
@@ -57,7 +93,7 @@
           </div>
        
         </div>
-    <?php }}
+    <?php }
 
     get_footer();
 ?>
