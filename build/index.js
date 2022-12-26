@@ -131,20 +131,34 @@ class Search {
     this.searchField.on("keyup", this.typeLogic.bind(this));
   }
   typeLogic() {
-    if (this.searchField.val() != prevoiusValue) {
+    if (this.searchField.val() != this.prevoiusValue) {
       clearTimeout(this.typingTimer);
       if (this.searchField.val()) {
         if (!this.isSpinnerVisible) {
-          this.resultsDiv.html('<div class=spinner-loader></div>');
+          this.resultsDiv.html('<div class="spinner-loader"></div>');
           this.isSpinnerVisible = true;
         }
-        this.typingTimer = setTimeout('x', 750);
+        this.typingTimer = setTimeout(this.getResults.bind(this), 750);
       } else {
         this.resultsDiv.html('');
         this.isSpinnerVisible = false;
       }
     }
     this.prevoiusValue = this.searchField.val();
+  }
+  getResults() {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().when(jquery__WEBPACK_IMPORTED_MODULE_0___default().getJSON(universityData.root_url + "/wp-json/wp/v2/posts?search=" + this.searchField.val()), jquery__WEBPACK_IMPORTED_MODULE_0___default().getJSON(universityData.root_url + "/wp-json/wp/v2/pages?search=" + this.searchField.val())).then((posts, pages) => {
+      var combinedResults = posts[0].concat(pages[0]);
+      this.resultsDiv.html(`
+            <h2 class="search-overlay__section-title">General Information</h2>
+            ${combinedResults.length ? '<ul class="link-list min-list">' : "<p></p>"}
+            ${combinedResults.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`)}
+            ${combinedResults.length ? '</ul>' : ''}
+            `);
+      this.isSpinnerVisible = false;
+    }, () => {
+      this.resultsDiv.html("<p>Unexpected Error; Please try again</p>");
+    });
   }
   keyPressDispatcher(e) {
     if (e.keyCode == 83 && !this.isOverlayOpen && !jquery__WEBPACK_IMPORTED_MODULE_0___default()("input , textarea").is(':focus')) {
@@ -158,6 +172,8 @@ class Search {
     this.searchOverlay.addClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").addClass("body-no-scroll");
     this.isOverlayOpen = true;
+    this.searchField.val('');
+    setTimeout(() => this.searchField.focus(), 301);
   }
   closeOverlay() {
     this.searchOverlay.removeClass("search-overlay--active");
