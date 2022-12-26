@@ -1,4 +1,4 @@
-/******/ (() => { // webpackBootstrap
+/******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
@@ -6,13 +6,14 @@
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_style_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../css/style.scss */ "./css/style.scss");
 /* harmony import */ var _modules_MobileMenu__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/MobileMenu */ "./src/modules/MobileMenu.js");
 /* harmony import */ var _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/HeroSlider */ "./src/modules/HeroSlider.js");
-/* harmony import */ var _modules_Search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/Search */ "./src/modules/Search.js");
+/* harmony import */ var _modules_GoogleMap__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/GoogleMap */ "./src/modules/GoogleMap.js");
+/* harmony import */ var _modules_Search__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/Search */ "./src/modules/Search.js");
 
 
 // Our modules / classes
@@ -20,10 +21,92 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 // Instantiate a new object using our modules/classes
 const mobileMenu = new _modules_MobileMenu__WEBPACK_IMPORTED_MODULE_1__["default"]();
 const heroSlider = new _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__["default"]();
-const search = new _modules_Search__WEBPACK_IMPORTED_MODULE_3__["default"]();
+const googleMap = new _modules_GoogleMap__WEBPACK_IMPORTED_MODULE_3__["default"]();
+const search = new _modules_Search__WEBPACK_IMPORTED_MODULE_4__["default"]();
+
+/***/ }),
+
+/***/ "./src/modules/GoogleMap.js":
+/*!**********************************!*\
+  !*** ./src/modules/GoogleMap.js ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+class GMap {
+  constructor() {
+    document.querySelectorAll(".acf-map").forEach(el => {
+      this.new_map(el);
+    });
+  }
+  new_map($el) {
+    var $markers = $el.querySelectorAll(".marker");
+    var args = {
+      zoom: 16,
+      center: new google.maps.LatLng(0, 0),
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map($el, args);
+    map.markers = [];
+    var that = this;
+
+    // add markers
+    $markers.forEach(function (x) {
+      that.add_marker(x, map);
+    });
+
+    // center map
+    this.center_map(map);
+  } // end new_map
+
+  add_marker($marker, map) {
+    var latlng = new google.maps.LatLng($marker.getAttribute("data-lat"), $marker.getAttribute("data-lng"));
+    var marker = new google.maps.Marker({
+      position: latlng,
+      map: map
+    });
+    map.markers.push(marker);
+
+    // if marker contains HTML, add it to an infoWindow
+    if ($marker.innerHTML) {
+      // create info window
+      var infowindow = new google.maps.InfoWindow({
+        content: $marker.innerHTML
+      });
+
+      // show info window when marker is clicked
+      google.maps.event.addListener(marker, "click", function () {
+        infowindow.open(map, marker);
+      });
+    }
+  } // end add_marker
+
+  center_map(map) {
+    var bounds = new google.maps.LatLngBounds();
+
+    // loop through all markers and create bounds
+    map.markers.forEach(function (marker) {
+      var latlng = new google.maps.LatLng(marker.position.lat(), marker.position.lng());
+      bounds.extend(latlng);
+    });
+
+    // only 1 marker?
+    if (map.markers.length == 1) {
+      // set center of map
+      map.setCenter(bounds.getCenter());
+      map.setZoom(16);
+    } else {
+      // fit to bounds
+      map.fitBounds(bounds);
+    }
+  } // end center_map
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (GMap);
 
 /***/ }),
 
@@ -31,12 +114,9 @@ const search = new _modules_Search__WEBPACK_IMPORTED_MODULE_3__["default"]();
 /*!***********************************!*\
   !*** ./src/modules/HeroSlider.js ***!
   \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
 /* harmony import */ var _glidejs_glide__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @glidejs/glide */ "./node_modules/@glidejs/glide/dist/glide.esm.js");
 
 class HeroSlider {
@@ -64,7 +144,7 @@ class HeroSlider {
     }
   }
 }
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (HeroSlider);
+/* harmony default export */ __webpack_exports__["default"] = (HeroSlider);
 
 /***/ }),
 
@@ -72,12 +152,9 @@ class HeroSlider {
 /*!***********************************!*\
   !*** ./src/modules/MobileMenu.js ***!
   \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
 class MobileMenu {
   constructor() {
     this.menu = document.querySelector(".site-header__menu");
@@ -93,7 +170,7 @@ class MobileMenu {
     this.menu.classList.toggle("site-header__menu--active");
   }
 }
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MobileMenu);
+/* harmony default export */ __webpack_exports__["default"] = (MobileMenu);
 
 /***/ }),
 
@@ -101,64 +178,117 @@ class MobileMenu {
 /*!*******************************!*\
   !*** ./src/modules/Search.js ***!
   \*******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "jquery");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
 class Search {
+  // 1. describe and create/initiate our object
   constructor() {
     this.addSearchHTML();
-    this.openButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".js-search-trigger");
-    this.closButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay__close");
+    this.resultsDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#search-overlay__results");
+    this.closeButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay__close");
     this.searchOverlay = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay");
     this.isOverlayOpen = false;
+    this.searchField = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#search-term");
+    this.isSpinnerVisible = false;
+    this.previousValue;
+    this.typingTimer;
     this.events();
   }
+
+  // 2. events
   events() {
     this.openButton.on("click", this.openOverlay.bind(this));
-    this.closButton.on("click", this.closeOverlay.bind(this));
-    jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on("keyup", this.keyPressDispatcher.bind(this));
+    this.closeButton.on("click", this.closeOverlay.bind(this));
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on("keydown", this.keyPressDispatcher.bind(this));
+    this.searchField.on("keyup", this.typeLogic.bind(this));
+  }
+
+  // 3. methods (function, action...)
+
+  typeLogic() {
+    if (this.searchField.val() != this.previousValue) {
+      clearTimeout(this.typingTimer);
+      if (this.searchField.val()) {
+        if (!this.isSpinnerVisible) {
+          this.resultsDiv.html('<div class="spinner-loader"></div>');
+          this.isSpinnerVisible = true;
+        }
+        this.typingTimer = setTimeout(this.getResults.bind(this), 750);
+      } else {
+        this.resultsDiv.html('');
+        this.isSpinnerVisible = false;
+      }
+    }
+    this.previousValue = this.searchField.val();
+  }
+  getResults() {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().when(jquery__WEBPACK_IMPORTED_MODULE_0___default().getJSON(universityData.root_url + "/wp-json/wp/v2/posts?search=" + this.searchField.val()), jquery__WEBPACK_IMPORTED_MODULE_0___default().getJSON(universityData.root_url + "/wp-json/wp/v2/pages?search=" + this.searchField.val())).then((posts, pages) => {
+      var combinedResults = posts[0].concat(pages[0]);
+      this.resultsDiv.html(`
+        <h2 class="search-overlay__section-title">General Information</h2>
+        ${combinedResults.length ? '<ul class="link-list min-list">' : "<p>No general information matches that search.</p>"}
+          ${combinedResults.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join("")}
+        ${combinedResults.length ? "</ul>" : ""}
+      `);
+      this.isSpinnerVisible = false;
+    }, () => {
+      this.resultsDiv.html("<p>Unexpected error; please try again.</p>");
+    });
   }
   keyPressDispatcher(e) {
-    if (e.keyCode == 83 && !this.isOverlayOpen && !jquery__WEBPACK_IMPORTED_MODULE_0___default()("input , textarea").is(':focus')) {
+    if (e.keyCode == 83 && !this.isOverlayOpen && !jquery__WEBPACK_IMPORTED_MODULE_0___default()("input, textarea").is(':focus')) {
       this.openOverlay();
     }
     if (e.keyCode == 27 && this.isOverlayOpen) {
       this.closeOverlay();
     }
   }
+
+  // Method for keyup event
+
+  /*keyPressDispatcher(e) {
+    //console.log(e.ketCode);
+    if(e.keyCode == 83) {
+      this.openOverlay();
+    }
+    if(e.keyCode == 27) {
+      this.closeOverlay();
+    }
+  }*/
   openOverlay() {
-    this.searchOverlay.addClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").addClass("body-no-scroll");
+    this.searchOverlay.addClass("search-overlay--active");
     this.isOverlayOpen = true;
+    this.searchField.val('');
+    setTimeout(() => this.searchField.focus(), 301);
   }
   closeOverlay() {
-    this.searchOverlay.removeClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").removeClass("body-no-scroll");
+    this.searchOverlay.removeClass("search-overlay--active");
+    console.log("our close method just ran!");
     this.isOverlayOpen = false;
   }
   addSearchHTML() {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").append(`
-        <div class="search-overlay">
-          <div class="search-overlay__top">
-            <div class="container">
-              <i class="fa fa-search search-overlay__icon" aria-hidden="true"></i>
-              <input type="text" class="search-term" placeholder="What are you looking for?" id="search-term">
-              <i class="fa fa-window-close search-overlay__close" aria-hidden="true"></i>
-            </div>
-          </div>
-          <div class="container">
-            <div id="search-overlay__results"></div>
-          </div>
-      </div>`);
+    <div class="search-overlay">
+      <div class="search-overlay__top">
+        <div class="container">
+          <i class="fa fa-search search-overlay__icon" aria-hidden="true"></i>
+          <input type="text" class="search-term" placeholder="What are you looking for?" id="search-term">
+          <i class="fa fa-window-close search-overlay__close" aria-hidden="true"></i>
+        </div>
+      </div>
+      <div class="container">
+        <div id="search-overlay__results"></div>
+      </div>
+  </div>`);
   }
 }
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Search);
+/* harmony default export */ __webpack_exports__["default"] = (Search);
 
 /***/ }),
 
@@ -166,7 +296,7 @@ class Search {
 /*!************************!*\
   !*** ./css/style.scss ***!
   \************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
@@ -178,7 +308,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!*************************!*\
   !*** external "jQuery" ***!
   \*************************/
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = window["jQuery"];
 
@@ -188,11 +318,11 @@ module.exports = window["jQuery"];
 /*!*******************************************************!*\
   !*** ./node_modules/@glidejs/glide/dist/glide.esm.js ***!
   \*******************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ Glide)
+/* harmony export */   "default": function() { return /* binding */ Glide; }
 /* harmony export */ });
 /*!
  * Glide.js v3.6.0
@@ -4105,9 +4235,9 @@ var Glide = /*#__PURE__*/function (_Core) {
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/chunk loaded */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		var deferred = [];
-/******/ 		__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 		__webpack_require__.O = function(result, chunkIds, fn, priority) {
 /******/ 			if(chunkIds) {
 /******/ 				priority = priority || 0;
 /******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
@@ -4116,10 +4246,12 @@ var Glide = /*#__PURE__*/function (_Core) {
 /******/ 			}
 /******/ 			var notFulfilled = Infinity;
 /******/ 			for (var i = 0; i < deferred.length; i++) {
-/******/ 				var [chunkIds, fn, priority] = deferred[i];
+/******/ 				var chunkIds = deferred[i][0];
+/******/ 				var fn = deferred[i][1];
+/******/ 				var priority = deferred[i][2];
 /******/ 				var fulfilled = true;
 /******/ 				for (var j = 0; j < chunkIds.length; j++) {
-/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every(function(key) { return __webpack_require__.O[key](chunkIds[j]); })) {
 /******/ 						chunkIds.splice(j--, 1);
 /******/ 					} else {
 /******/ 						fulfilled = false;
@@ -4134,50 +4266,50 @@ var Glide = /*#__PURE__*/function (_Core) {
 /******/ 			}
 /******/ 			return result;
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
+/******/ 		__webpack_require__.n = function(module) {
 /******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
 /******/ 			__webpack_require__.d(getter, { a: getter });
 /******/ 			return getter;
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 		__webpack_require__.d = function(exports, definition) {
 /******/ 			for(var key in definition) {
 /******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
 /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 				}
 /******/ 			}
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
+/******/ 		__webpack_require__.r = function(exports) {
 /******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
 /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// no baseURI
 /******/ 		
 /******/ 		// object to store loaded and loading chunks
@@ -4198,15 +4330,17 @@ var Glide = /*#__PURE__*/function (_Core) {
 /******/ 		
 /******/ 		// no HMR manifest
 /******/ 		
-/******/ 		__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 		__webpack_require__.O.j = function(chunkId) { return installedChunks[chunkId] === 0; };
 /******/ 		
 /******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
-/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 		var webpackJsonpCallback = function(parentChunkLoadingFunction, data) {
+/******/ 			var chunkIds = data[0];
+/******/ 			var moreModules = data[1];
+/******/ 			var runtime = data[2];
 /******/ 			// add "moreModules" to the modules object,
 /******/ 			// then flag all "chunkIds" as loaded and fire callback
 /******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 			if(chunkIds.some(function(id) { return installedChunks[id] !== 0; })) {
 /******/ 				for(moduleId in moreModules) {
 /******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
 /******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
@@ -4225,17 +4359,17 @@ var Glide = /*#__PURE__*/function (_Core) {
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = globalThis["webpackChunkfictional_university_theme"] = globalThis["webpackChunkfictional_university_theme"] || [];
+/******/ 		var chunkLoadingGlobal = self["webpackChunkfictional_university_theme"] = self["webpackChunkfictional_university_theme"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /************************************************************************/
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["./style-index"], () => (__webpack_require__("./src/index.js")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["./style-index"], function() { return __webpack_require__("./src/index.js"); })
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
