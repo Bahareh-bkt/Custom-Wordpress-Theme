@@ -122,6 +122,15 @@ class Search {
   events() {
     this.openButton.on("click", this.openOverlay.bind(this));
     this.closButton.on("click", this.closeOverlay.bind(this));
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on("keyup", this.keyPressDispatcher.bind(this));
+  }
+  keyPressDispatcher(e) {
+    if (e.keyCode == 83 && !this.isOverlayOpen && !jquery__WEBPACK_IMPORTED_MODULE_0___default()("input , textarea").is(':focus')) {
+      this.openOverlay();
+    }
+    if (e.keyCode == 27 && this.isOverlayOpen) {
+      this.closeOverlay();
+    }
   }
   openOverlay() {
     this.searchOverlay.addClass("search-overlay--active");
@@ -131,6 +140,7 @@ class Search {
   closeOverlay() {
     this.searchOverlay.removeClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").removeClass("body-no-scroll");
+    this.isOverlayOpen = false;
   }
   addSearchHTML() {
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").append(`
